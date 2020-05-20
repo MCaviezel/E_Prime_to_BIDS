@@ -57,12 +57,12 @@ for(s in 1:length(PS_excel[[2]])){
   mutate(time_to_RT_alternative_onset_or_duration = as.numeric(onset) + as.numeric(response_time)) %>%
   mutate_at(c("onset", "accuracy", "response_time", "duration", "time_to_offset_alternative_onset", "time_to_RT_alternative_onset_or_duration"), funs(as.numeric(.))) %>% 
   mutate_at(c("onset", "response_time", "duration", "time_to_offset_alternative_onset", "time_to_RT_alternative_onset_or_duration"), funs(./1000)) %>% 
-  select(onset, trial_type, accuracy, button, response_time, duration, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
+  select(onset, duration, trial_type, accuracy, button, response_time, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
   
-  write.table(onset_rt_tmp, file = paste(path, PS_excel[[s,1]], PS_excel[[s,2]], paste(paste("events", PS_excel[[s,1]], PS_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+  write.table(onset_rt_tmp, file = paste(path, PS_excel[[s,1]], PS_excel[[s,2]], paste(paste("events", PS_excel[[s,1]], PS_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
   
   manual <- onset_rt_tmp %>% arrange(trial_type, onset) %>% filter(!is.na(button)) %>% filter(accuracy==1) %>% select(onset, trial_type)
-  write.table(manual, file = paste(path, PS_excel[[s,1]], PS_excel[[s,2]], paste(paste("manual_events", PS_excel[[s,1]], PS_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+  write.table(manual, file = paste(path, PS_excel[[s,1]], PS_excel[[s,2]], paste(paste("manual_events", PS_excel[[s,1]], PS_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
 }
 
 ### Process association learning (AL1)
@@ -83,13 +83,13 @@ tmp2_AL1 <- tmp_AL1 %>% mutate(button_nr = rowSums(.[,c("FNP1.RESP", "FNP2.RESP"
   mutate(time_to_offset_alternative_onset = (as.numeric(rowSums(.[,c("FNP1.OffsetTime", "FNP2.OffsetTime","FNP3.OffsetTime", "FNP4.OffsetTime", "FNP5.OffsetTime", "FNP6.OffsetTime","FNP7.OffsetTime", "FNP8.OffsetTime","FNP9.OffsetTime", "FNP10.OffsetTime", "FNP11.OffsetTime", "FNP12.OffsetTime")],na.rm = T))/1000)-scanner_start) %>% 
   mutate(duration = (as.numeric(rowSums(.[,c("FNP1.OnsetToOnsetTime", "FNP2.OnsetToOnsetTime","FNP3.OnsetToOnsetTime", "FNP4.OnsetToOnsetTime", "FNP5.OnsetToOnsetTime", "FNP6.OnsetToOnsetTime","FNP7.OnsetToOnsetTime", "FNP8.OnsetToOnsetTime","FNP9.OnsetToOnsetTime", "FNP10.OnsetToOnsetTime", "FNP11.OnsetToOnsetTime", "FNP12.OnsetToOnsetTime")],na.rm = T))/1000)) %>% 
   mutate(trial_type = ifelse(startsWith(Face, "C")==T, "Contingent", "NonContingent")) %>% 
-  select(onset, trial_type, button, response_time, duration, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
+  select(onset, duration, trial_type, button, response_time, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
 
-write.table(tmp2_AL1, file = paste(path, AL1_excel[[s,1]], AL1_excel[[s,2]], paste(paste("events", AL1_excel[[s,1]], AL1_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+write.table(tmp2_AL1, file = paste(path, AL1_excel[[s,1]], AL1_excel[[s,2]], paste(paste("events", AL1_excel[[s,1]], AL1_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
 
 manual <- tmp2_AL1 %>% arrange(trial_type, onset) %>% filter(!is.na(button)) %>% select(onset, trial_type)
 
-write.table(manual, file = paste(path, AL1_excel[[s,1]], AL1_excel[[s,2]], paste(paste("manual_events", AL1_excel[[s,1]], AL1_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+write.table(manual, file = paste(path, AL1_excel[[s,1]], AL1_excel[[s,2]], paste(paste("manual_events", AL1_excel[[s,1]], AL1_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
 
 }
 
@@ -120,13 +120,14 @@ tmp2_AL2 <- tmp_AL2 %>%
   mutate(trial_type_less_granular = recode(Art, BLRL = "recently_learned_faces_baseline", BLFF = "famous_faces_baseline", RLFC = "recently_learned_faces", RLFI = "recently_learned_faces", FFC = "famous_faces", FFI = "famous_faces" )) %>% 
   mutate(accuracy = rowSums(.[,c("Recall1.ACC", "Recall2.ACC","Recall3.ACC", "Recall4.ACC", "Recall5.ACC", "Recall6.ACC","Recall7.ACC", "Recall8.ACC","Recall9.ACC", "Recall10.ACC", "Recall11.ACC", "Recall12.ACC",
                                  "Recall13.ACC", "Recall14.ACC", "Recall15.ACC", "Recall16.ACC", "Recall17.ACC")],na.rm = T)) %>% 
-  select(onset, trial_type, accuracy, button, response_time, duration, trial_type_less_granular, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
+  select(onset, duration, trial_type, accuracy, button, response_time, trial_type_less_granular, time_to_offset_alternative_onset, time_to_RT_alternative_onset_or_duration)
 
-write.table(tmp2_AL2, file = paste(path, AL2_excel[[s,1]], AL2_excel[[s,2]], paste(paste("events", AL2_excel[[s,1]], AL2_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+write.table(tmp2_AL2, file = paste(path, AL2_excel[[s,1]], AL2_excel[[s,2]], paste(paste("events", AL2_excel[[s,1]], AL2_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
 
 manual <- tmp2_AL2 %>% arrange(trial_type, onset) %>% filter(!is.na(button)) %>% filter(accuracy==1) %>% select(onset, trial_type)
 
-write.table(manual, file = paste(path, AL2_excel[[s,1]], AL2_excel[[s,2]], paste(paste("manual_events", AL2_excel[[s,1]], AL2_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F)
+write.table(manual, file = paste(path, AL2_excel[[s,1]], AL2_excel[[s,2]], paste(paste("manual_events", AL2_excel[[s,1]], AL2_excel[[s,2]], sep = "_"),"tsv", sep = "."), sep ="/"), sep = "\t", row.names = F, quote = F)
 
 }
+
 
